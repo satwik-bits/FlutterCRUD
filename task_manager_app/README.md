@@ -9,7 +9,8 @@ This project is a starting point for our Flutter application.
 To setup this project, please follow the below steps:
 1) Install Flutter, if using macOS, you can install using homebrew. Else you can manually install as well.
 
-2) Install cocoapods from homebrew if using macOS, else install it manually.
+2) Install cocoapods from homebrew if using macOS, else install it manually. Use an IDE preferrably,VSCode because of its in-built 
+support.
 
 3) Our project consists of 3 screens, including login, register and task management page, where the user is allowed
 to perform CRUD operations on the number of tasks he is assigned. In our case, the user is registered as a Student. 
