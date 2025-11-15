@@ -41,7 +41,25 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => isLoading = true);
 
-    // Create custom user record in "user" table
+    final existingUserQuery = QueryBuilder<ParseObject>(ParseObject('user'))
+      ..whereEqualTo('email', email);
+
+    final existingUserResponse = await existingUserQuery.query();
+
+    if (existingUserResponse.success &&
+        existingUserResponse.results != null &&
+        existingUserResponse.results!.isNotEmpty) {
+      setState(() => isLoading = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Email already registered!"),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     final user = ParseObject('user')
       ..set('name', name)
       ..set('age', int.tryParse(age))
@@ -84,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Container(
             padding: const EdgeInsets.all(24),
+            width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -144,13 +163,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 buildInput(
                   controller: emailController,
-                  label: 'Email',
+                  label: 'Email Address',
                   icon: Icons.email_outlined,
                   type: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16),
 
-                // Password with eye toggle
+                // Password with toggle
                 TextField(
                   controller: passwordController,
                   obscureText: !isPasswordVisible,
@@ -161,8 +180,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       icon: Icon(isPasswordVisible
                           ? Icons.visibility
                           : Icons.visibility_off),
-                      onPressed: () => setState(
-                          () => isPasswordVisible = !isPasswordVisible),
+                      onPressed: () => setState(() {
+                        isPasswordVisible = !isPasswordVisible;
+                      }),
                     ),
                     filled: true,
                     fillColor: Colors.grey[100],
@@ -213,7 +233,6 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // Reusable input builder
   Widget buildInput({
     required TextEditingController controller,
     required String label,
